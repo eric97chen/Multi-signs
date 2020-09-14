@@ -1,10 +1,10 @@
 package blind
 
 import (
-	"crypto/sha256"
 	"errors"
 	"math/big"
 	"math/rand"
+	comm "signs/common"
 	"signs/crypto/eddsa"
 	"time"
 )
@@ -86,7 +86,7 @@ func (u *User) CalcC(msg []byte, bzlen int, kg, knownPub *eddsa.Point) (*big.Int
 	delQ := knownPub.ScalarMul(u.delta)
 	A, _ := kg.Add(pgam, delQ)
 	t := new(big.Int).Mod(A.GetX(), eddsa.Ec().Params().N)
-	u.c = new(big.Int).SetBytes(hash(msg, t.Bytes()))
+	u.c = new(big.Int).SetBytes(comm.Hash256(msg, t.Bytes()))
 	c := new(big.Int).Sub(u.c, u.delta)
 	if c.Sign() != -1 {
 		return u.CalcC(msg, bzlen, kg, knownPub)
@@ -120,20 +120,11 @@ func (s *Signature) Verify(KnownPub *eddsa.Point) bool {
 	cQ := KnownPub.ScalarMul(s.c)
 	sG := eddsa.ScalarBaseMul(s.s)
 	p, _ := cQ.Add(sG)
-	h := new(big.Int).SetBytes(hash(s.msg, new(big.Int).Mod(p.GetX(), eddsa.Ec().Params().N).Bytes()))
+	h := new(big.Int).SetBytes(comm.Hash256(s.msg, new(big.Int).Mod(p.GetX(), eddsa.Ec().Params().N).Bytes()))
 	return s.c.Cmp(h) == 0
 }
 
 func random() *rand.Rand {
 	src := rand.NewSource(time.Now().UnixNano())
 	return rand.New(src)
-}
-
-func hash(args ...[]byte) []byte {
-	h := sha256.New()
-	h.Reset()
-	for i := range args {
-		h.Write(args[i])
-	}
-	return h.Sum(nil)
 }
