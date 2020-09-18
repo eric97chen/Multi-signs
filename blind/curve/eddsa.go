@@ -6,7 +6,7 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/decred/dcrd/dcrec/edwards"
+	edwards "signs/crypto/edwards25519"
 )
 
 var (
@@ -21,7 +21,7 @@ type (
 )
 
 func init() {
-	ec = edwards.Edwards()
+	ec = edwards.CurveEdwards25519()
 }
 
 func NewPoint(x, y *big.Int) (*Point, error) {

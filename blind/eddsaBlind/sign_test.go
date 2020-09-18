@@ -1,7 +1,7 @@
 package blind
 
 import (
-	"signs/crypto/eddsa"
+	eddsa "signs/blind/curve"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

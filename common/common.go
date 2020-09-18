@@ -1,7 +1,9 @@
 package common
 
 import (
+	xrand "crypto/rand"
 	"crypto/sha256"
+	"math/big"
 	"math/rand"
 	"time"
 )
@@ -20,4 +22,10 @@ func Random() *rand.Rand {
 	return rand.New(rand.NewSource(seed))
 }
 
-//SafePrime
+func Prime(bits int) (*big.Int, error) {
+	p, err := xrand.Prime(Random(), bits)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
+}

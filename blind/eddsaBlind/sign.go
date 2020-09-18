@@ -4,8 +4,8 @@ import (
 	"errors"
 	"math/big"
 	"math/rand"
+	eddsa "signs/blind/curve"
 	comm "signs/common"
-	"signs/crypto/eddsa"
 	"time"
 )
 
